@@ -57,6 +57,11 @@ class FrontController extends AbstractController
     {
         return $this->render('front/payment.html.twig');
     }
+
+    public function MainCategories()
+    {
+        return $this->render('front/main_categories.html.twig');
+    }
     
 }
 
