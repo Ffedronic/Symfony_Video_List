@@ -3,5 +3,5 @@
 <a class="p-2 text-dark" href="{{path("video_list")}}">Unbelievable</a>
 <a class="p-2 text-dark" href="{{path("video_list")}}">Inspirational</a> #}
 {% for category in categories %}
-<a class="p-2 text-dark" href="{{path("video_list", {'categoryname': category.name, "categoryid": category.id})}}"> {{category.name}} </a>
+<a class="p-2 text-dark" href="{{path("video_list", {'categoryname': category.name|lower|slugify, "categoryid": category.id})}}"> {{category.name}} </a>
 {% endfor %}
