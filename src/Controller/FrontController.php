@@ -22,9 +22,10 @@ class FrontController extends AbstractController
     }
 
     #[Route('/video-list/category/{categoryname},{categoryid}', name: 'video_list')]
-    public function videolist(CategoryTreeFrontPage $categories): Response
-    {
-        
+    public function videolist(CategoryTreeFrontPage $categories, $categoryid): Response
+    {   
+        $subcategories = $categories->buildTree($categoryid);
+        dump($subcategories);
         return $this->render('front/video_list.html.twig');
     }
 
