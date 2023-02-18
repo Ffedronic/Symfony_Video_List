@@ -11,6 +11,10 @@ abstract class CategoryTreeAbstract {
     protected static $dbconnection;
     private $entitymanager;
     public $urlgenerator;
+    public $mainParentName;
+    public $mainParentId;
+    public $currentCategoryName;
+    public $slugger;
 
     public function __construct(EntityManagerInterface $entitymanager, UrlGeneratorInterface $urlgenerator)
     {

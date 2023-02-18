@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Twig\Extension\AppExtension;
 use App\Utils\AbstractClasses\CategoryTreeAbstract;
 
 class CategoryTreeFrontPage extends CategoryTreeAbstract
@@ -18,6 +19,7 @@ class CategoryTreeFrontPage extends CategoryTreeAbstract
 
     public function getCategoryListAndParent(int $id)
     {
+        $this->slugger = new AppExtension; // Twig extension to slugify url's for categories
         $parentData = $this->getMainParent($id); // main parent of subcategory
         $this->mainParentName = $parentData['name']; // for accesing in view
         $this->mainParentId = $parentData['id']; // for accesing in view
@@ -31,8 +33,7 @@ class CategoryTreeFrontPage extends CategoryTreeAbstract
     {
         $this->categorylist .= $this->html_1;
         foreach ($categories_array as $value) {
-            $catName = $value['name'];
-
+            $catName = $this->slugger->slugify($value['name']);
             $url = $this->urlgenerator->generate('video_list', ['categoryname' => $catName, 'categoryid' => $value['id']]);
             $this->categorylist .= $this->html_2 . $this->html_3 . $url . $this->html_4 . $catName . $this->html_5;
             if (!empty($value['children'])) {
