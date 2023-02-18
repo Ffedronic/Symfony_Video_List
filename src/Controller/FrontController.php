@@ -23,10 +23,11 @@ class FrontController extends AbstractController
 
     #[Route('/video-list/category/{categoryname},{categoryid}', name: 'video_list')]
     public function videolist(CategoryTreeFrontPage $categories, $categoryid): Response
-    {   
+    {
         $subcategories = $categories->buildTree($categoryid);
-        dump($subcategories);
-        return $this->render('front/video_list.html.twig');
+        return $this->render('front/video_list.html.twig', [
+            'subcategories' => $categories->getCategoryList($subcategories)
+        ]);
     }
 
     #[Route('/video-details', name: 'video_details')]
@@ -65,7 +66,7 @@ class FrontController extends AbstractController
         return $this->render('front/payment.html.twig');
     }
 
-    public function mainCategories( CategoryRepository $categoryRepository): Response
+    public function mainCategories(CategoryRepository $categoryRepository): Response
     {
         $categories = $categoryRepository->findBy(["parent" => null], ["name" => "ASC"]);
         return $this->render('front/main_categories.html.twig', ["categories" => $categories]);

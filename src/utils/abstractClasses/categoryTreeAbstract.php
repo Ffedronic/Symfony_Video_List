@@ -6,6 +6,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class CategoryTreeAbstract {
 
+    public $categorylist;
     public $categoriesArrayFromDb;
     protected static $dbconnection;
     private $entitymanager;
@@ -37,7 +38,7 @@ abstract class CategoryTreeAbstract {
         }
         return $subcategory;
     }
-    
+
     private function getCategories(): array
     {
         if(self::$dbconnection)
