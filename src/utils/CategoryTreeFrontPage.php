@@ -54,6 +54,7 @@ class CategoryTreeFrontPage extends CategoryTreeAbstract
         }
 
         $this->categorylist .= $this->html_7;
+        
         return $this-> categorylist;
     }
 
