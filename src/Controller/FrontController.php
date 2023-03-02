@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
+use App\Repository\VideoRepository;
 use App\Utils\AbstractClasses\CategoryTreeAbstract;
 use App\Utils\CategoryTreeFrontPage;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,11 +23,13 @@ class FrontController extends AbstractController
     }
 
     #[Route('/video-list/category/{categoryname},{categoryid}', name: 'video_list')]
-    public function videolist(CategoryTreeFrontPage $categories, $categoryid): Response
+    public function videolist(CategoryTreeFrontPage $categories, $categoryid, VideoRepository $videoRepository): Response
     {
         $categories->getCategoryListAndParent($categoryid);
-        return $this->render('front/video_list.html.twig',[
-            'subcategories' => $categories
+        $videos = $videoRepository->findAll();
+        return $this->render('front/video_list.html.twig', [
+            'subcategories' => $categories,
+            'videos' => $videos
         ]);
     }
 
