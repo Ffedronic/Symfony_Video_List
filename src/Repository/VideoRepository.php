@@ -63,7 +63,7 @@ class VideoRepository extends ServiceEntityRepository
         return $pagination;
     }
 
-    public function findByTitle(string $query, int $page, ?string $sort_method)
+    public function findByTitle(string $query, int $page , ?string $sort_method)
     {
         $sort_method = $sort_method != 'rating' ? $sort_method : "ASC";
 
@@ -79,6 +79,7 @@ class VideoRepository extends ServiceEntityRepository
         $dbquery = $queryBuilder
             ->orderBy('v.title', $sort_method)
             ->getQuery();
+
         $pagination = $this->paginator->paginate($dbquery, $page, 5);
 
         return $pagination;

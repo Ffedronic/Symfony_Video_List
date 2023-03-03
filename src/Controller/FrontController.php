@@ -24,13 +24,13 @@ class FrontController extends AbstractController
     public function videolist(CategoryTreeFrontPage $categories, $categoryid, VideoRepository $videoRepository, $page, Request $request): Response
     {
         $categories->getCategoryListAndParent($categoryid);
-        
+
         $ids = $categories->getChildIds($categoryid);
         array_push($ids, $categoryid);
 
         $videos = $videoRepository->findByChildIds($ids, $page, $request->get('sortby'));
 
-       
+
 
         return $this->render('front/video_list.html.twig', [
             'subcategories' => $categories,
@@ -44,19 +44,20 @@ class FrontController extends AbstractController
         return $this->render('front/video_details.html.twig');
     }
 
-    #[Route('/search-results/{page}', defaults:['page'=> 1], methods: ["GET"], name: 'search_results')]
+    #[Route('/search-results/{page}', defaults: ['page' => 1], methods: ["GET"], name: 'search_results')]
     public function searchresults(VideoRepository $videoRepository, $page, Request $request): Response
     {
         $videos = null;
         $query = null;
 
-        if($query = $request->get('query')){
+        if ($query = $request->get('query')) {
             $videos = $videoRepository->findByTitle($query, $page, $request->get('sortby'));
-        } else {
-            $videos = null;
+            if (!$videos->getItems()) {
+                $videos = null;
+            }
         }
 
-        return $this->render('front/search_results.html.twig', ['videos'=>$videos, 'query'=>$query]);
+        return $this->render('front/search_results.html.twig', ['videos' => $videos, 'query' => $query]);
     }
 
     #[Route('/pricing', name: 'pricing')]
