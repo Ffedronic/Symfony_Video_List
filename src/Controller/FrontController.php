@@ -44,10 +44,19 @@ class FrontController extends AbstractController
         return $this->render('front/video_details.html.twig');
     }
 
-    #[Route('/search-results', methods: ["POST"], name: 'search_results')]
-    public function searchresults(): Response
+    #[Route('/search-results/{page}', defaults:['page'=> 1], methods: ["GET"], name: 'search_results')]
+    public function searchresults(VideoRepository $videoRepository, $page, Request $request): Response
     {
-        return $this->render('front/search_results.html.twig');
+        $videos = null;
+        $query = null;
+
+        if($query = $request->get('query')){
+            $videos = $videoRepository->findByTitle($query, $page, $request->get('sortby'));
+        } else {
+            $videos = null;
+        }
+
+        return $this->render('front/search_results.html.twig', ['videos'=>$videos, 'query'=>$query]);
     }
 
     #[Route('/pricing', name: 'pricing')]
