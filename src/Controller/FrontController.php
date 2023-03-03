@@ -2,14 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use App\Repository\VideoRepository;
-use App\Utils\AbstractClasses\CategoryTreeAbstract;
 use App\Utils\CategoryTreeFrontPage;
-use Doctrine\Persistence\ManagerRegistry;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,14 +21,14 @@ class FrontController extends AbstractController
     }
 
     #[Route('/video-list/category/{categoryname},{categoryid}/{page}', name: 'video_list', defaults: ["page" => 1])]
-    public function videolist(CategoryTreeFrontPage $categories, $categoryid, VideoRepository $videoRepository, $page): Response
+    public function videolist(CategoryTreeFrontPage $categories, $categoryid, VideoRepository $videoRepository, $page, Request $request): Response
     {
         $categories->getCategoryListAndParent($categoryid);
         
         $ids = $categories->getChildIds($categoryid);
         array_push($ids, $categoryid);
 
-        $videos = $videoRepository->findByChildIds($ids, $page);
+        $videos = $videoRepository->findByChildIds($ids, $page, $request->get('sortby'));
 
        
 
