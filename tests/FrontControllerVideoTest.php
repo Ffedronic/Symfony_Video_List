@@ -6,18 +6,18 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class FrontControllerVideoTest extends WebTestCase
 {
-    public function testSomething(): void
+    public function testSearchNoResultsFound(): void
     {
         $client = static::createClient();
         $client->followRedirects();
 
         $crawler = $client->request('GET', '/');
-        $form = $crawler->selectButton('Search video')->form([
-            'query' => 'aaa',
-        ]);
-        $crawler = $client->submit($form);
+        $form = $crawler->selectButton('Search video')->form();
+        $crawler = $client->submit($form,["query"=>"movies"]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Search');
+        $this->assertSelectorTextContains('h1', 'No results');
     }
+
+    
 }
