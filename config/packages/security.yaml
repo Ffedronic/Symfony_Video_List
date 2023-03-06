@@ -17,6 +17,25 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            form_login:
+                # the route name that the login form submits to
+                check_path: login
+                #when the user tries to access a protected page, they are redirected to
+                login_path: login
+                #secure the login againt CSRF
+                enable_csrf: true   
+                #when successfully login             
+                default_target_path: admin_main_page 
+                username_parameter: _email   
+            logout:
+                #the route name in order to logout
+                path: logout
+                #after logout, redirect to
+                target: main_page
+            remember_me: 
+                secret: '%kernel.secret%'
+                lifetime: 604800 # 1 week in seconds
+                path: /
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
