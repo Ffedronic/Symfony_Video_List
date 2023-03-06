@@ -13,7 +13,7 @@ class FrontControllerVideoTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
         $form = $crawler->selectButton('Search video')->form();
-        $crawler = $client->submit($form,["query"=>"movies"]);
+        $crawler = $client->submit($form,["query"=>"aaa"]);
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'No results');
