@@ -21,7 +21,7 @@ class AdminController extends AbstractController
         return $this->render('admin/my_profile.html.twig');
     }
 
-    #[Route('admin/categories', name: 'categories', methods: ["GET", "POST"])]
+    #[Route('admin/su/categories', name: 'categories', methods: ["GET", "POST"])]
     public function categories(CategoryTreeAdminList $categories, Request $request, CategoryRepository $categoryRepository): Response
     {
         $categories->getCategoryList($categories->buildTree());
@@ -44,19 +44,19 @@ class AdminController extends AbstractController
         return $this->render('admin/videos.html.twig');
     }
 
-    #[Route('admin/upload_videos', name: 'upload_video')]
+    #[Route('admin/su/upload_videos', name: 'upload_video')]
     public function upload_videos(): Response
     {
         return $this->render('admin/upload_video.html.twig');
     }
 
-    #[Route('admin/users', name: 'users')]
+    #[Route('admin/su/users', name: 'users')]
     public function users(): Response
     {
         return $this->render('admin/users.html.twig');
     }
 
-    #[Route('admin/edit_category/{id}', name: 'edit_category', methods: ["GET", "POST"])]
+    #[Route('admin/su/edit_category/{id}', name: 'edit_category', methods: ["GET", "POST"])]
     public function edit_category(Category $category, Request $request, CategoryRepository $categoryRepository): Response
     {
         $form = $this->createForm(CategoryType::class, $category);
@@ -69,7 +69,7 @@ class AdminController extends AbstractController
         return $this->render('admin/edit_category.html.twig', ["category" => $category, 'form' => $form->createView()]);
     }
 
-    #[Route('admin/delete_category/{id}', name: 'delete_category')]
+    #[Route('admin/su/delete_category/{id}', name: 'delete_category')]
     public function delete_category(Category $category, ManagerRegistry $doctrine)
     {
         $entityManager = $doctrine->getManager();
@@ -82,6 +82,7 @@ class AdminController extends AbstractController
 
     public function getAllCategories(CategoryTreeAdminOptionList $categories, $editedCategory = null): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $categories->getCategoryList($categories->buildTree());
         return $this->render("admin/all_categories.html.twig", ["categories" => $categories->categorylist, "editedCategory" => $editedCategory]);
     }
