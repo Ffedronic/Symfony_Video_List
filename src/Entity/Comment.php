@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 class Comment
 {
-    private ?string $created_at2 = null;
+    private ?DateTime $created_at2 = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
