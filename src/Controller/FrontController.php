@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class FrontController extends AbstractController
@@ -36,8 +35,6 @@ class FrontController extends AbstractController
         array_push($ids, $categoryid);
 
         $videos = $videoRepository->findByChildIds($ids, $page, $request->get('sortby'));
-
-
 
         return $this->render('front/video_list.html.twig', [
             'subcategories' => $categories,
