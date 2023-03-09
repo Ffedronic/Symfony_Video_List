@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Video;
 use App\Form\RegisterType;
 use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
@@ -42,10 +43,11 @@ class FrontController extends AbstractController
         ]);
     }
 
-    #[Route('/video-details', name: 'video_details')]
-    public function videodetails(): Response
+    #[Route('/video-details/{video}', name: 'video_details')]
+    public function videodetails($video, VideoRepository $videoRepository): Response
     {
-        return $this->render('front/video_details.html.twig');
+        dump($videoRepository->findVideoDetails($video));
+        return $this->render('front/video_details.html.twig', ['video'=>$videoRepository->findVideoDetails($video)]);
     }
 
     #[Route('/search-results/{page}', defaults: ['page' => 1], methods: ["GET"], name: 'search_results')]
