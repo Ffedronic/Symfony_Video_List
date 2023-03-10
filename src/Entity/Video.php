@@ -34,9 +34,19 @@ class Video
     #[ORM\OneToMany(mappedBy: 'video', targetEntity: Comment::class)]
     private Collection $comments;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'likedVideos')]
+    #[ORM\JoinTable(name: 'likes')]
+    private Collection $usersThatLike;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'dislikedVideos')]
+    #[ORM\JoinTable(name: 'dislikes')]
+    private Collection $usersThatDislikeVideos;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->usersThatLike = new ArrayCollection();
+        $this->usersThatDislikeVideos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -118,6 +128,54 @@ class Video
                 $comment->setVideo(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsersThatLike(): Collection
+    {
+        return $this->usersThatLike;
+    }
+
+    public function addUsersThatLike(User $usersThatLike): self
+    {
+        if (!$this->usersThatLike->contains($usersThatLike)) {
+            $this->usersThatLike->add($usersThatLike);
+        }
+
+        return $this;
+    }
+
+    public function removeUsersThatLike(User $usersThatLike): self
+    {
+        $this->usersThatLike->removeElement($usersThatLike);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsersThatDislikeVideos(): Collection
+    {
+        return $this->usersThatDislikeVideos;
+    }
+
+    public function addUsersThatDislikeVideo(User $usersThatDislikeVideo): self
+    {
+        if (!$this->usersThatDislikeVideos->contains($usersThatDislikeVideo)) {
+            $this->usersThatDislikeVideos->add($usersThatDislikeVideo);
+        }
+
+        return $this;
+    }
+
+    public function removeUsersThatDislikeVideo(User $usersThatDislikeVideo): self
+    {
+        $this->usersThatDislikeVideos->removeElement($usersThatDislikeVideo);
 
         return $this;
     }
