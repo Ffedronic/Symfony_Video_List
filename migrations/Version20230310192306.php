@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230310175235 extends AbstractMigration
+final class Version20230310192306 extends AbstractMigration
 {
     public function getDescription(): string
     {

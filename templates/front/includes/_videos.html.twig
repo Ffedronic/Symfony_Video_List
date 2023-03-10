@@ -22,10 +22,10 @@
 						<div class="btn-group">
 
 							<i class="fa fa-thumbs-up">
-								<small class="text-muted">(23)</small>
+								<small class="text-muted">({{video.usersThatLike.count}})</small>
 							</i>&nbsp;
 							<i class="fa fa-thumbs-down">
-								<small class="text-muted">(9)</small>
+								<small class="text-muted">({{video.usersThatDislike.count}})</small>
 							</i>
 							{% if is_granted('IS_AUTHENTICATED_REMEMBERED')  %}
 								<button data-toggle="tooltip" data-placement="top" title="Click to like the video" type="button" class="btn btn-primary btn-outline-success btn-sm ml-1">

@@ -40,6 +40,8 @@ class FrontController extends AbstractController
 
         $videos = $videoRepository->findByChildIds($ids, $page, $request->get('sortby'));
 
+        dump($videos);
+        
         return $this->render('front/video_list.html.twig', [
             'subcategories' => $categories,
             'videos' => $videos
@@ -50,7 +52,7 @@ class FrontController extends AbstractController
     public function videodetails($video, VideoRepository $videoRepository): Response
     {
         dump($videoRepository->findVideoDetails($video));
-        return $this->render('front/video_details.html.twig', ['video'=>$videoRepository->findVideoDetails($video)]);
+        return $this->render('front/video_details.html.twig', ['video' => $videoRepository->findVideoDetails($video)]);
     }
 
     #[Route('/search-results/{page}', defaults: ['page' => 1], methods: ["GET"], name: 'search_results')]
@@ -128,16 +130,15 @@ class FrontController extends AbstractController
         return $this->render('front/payment.html.twig');
     }
 
-     /**
+    /**
      * @Route("/new-comment/{video}", methods={"POST"}, name="new_comment")
-    */
+     */
     #[Route('/new-comment/{video}', name: 'new_comment')]
-    public function newComment(Video $video, Request $request, ManagerRegistry $doctrine )
-     {
+    public function newComment(Video $video, Request $request, ManagerRegistry $doctrine)
+    {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
-        
-        if ( !empty( trim($request->get('comment')) ) ) 
-        {           
+
+        if (!empty(trim($request->get('comment')))) {
             $comment = new Comment();
             $comment->setContent($request->get('comment'));
             $comment->setUser($this->getUser());
@@ -147,9 +148,9 @@ class FrontController extends AbstractController
             $entitymanager->persist($comment);
             $entitymanager->flush();
         }
-        
-        return $this->redirectToRoute('video_details',['video'=>$video->getId()]);
-     }
+
+        return $this->redirectToRoute('video_details', ['video' => $video->getId()]);
+    }
 
     public function mainCategories(CategoryRepository $categoryRepository): Response
     {

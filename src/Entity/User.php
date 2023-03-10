@@ -229,7 +229,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->dislikedVideos->contains($dislikedVideo)) {
             $this->dislikedVideos->add($dislikedVideo);
-            $dislikedVideo->addUsersThatDislikeVideo($this);
+            $dislikedVideo->addUsersThatDislike($this);
         }
 
         return $this;
@@ -238,7 +238,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeDislikedVideo(Video $dislikedVideo): self
     {
         if ($this->dislikedVideos->removeElement($dislikedVideo)) {
-            $dislikedVideo->removeUsersThatDislikeVideo($this);
+            $dislikedVideo->removeUsersThatDislike($this);
         }
 
         return $this;

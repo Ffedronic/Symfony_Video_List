@@ -159,12 +159,12 @@ class Video
     /**
      * @return Collection<int, User>
      */
-    public function getUsersThatDislikeVideos(): Collection
+    public function getUsersThatDislike(): Collection
     {
         return $this->usersThatDislikeVideos;
     }
 
-    public function addUsersThatDislikeVideo(User $usersThatDislikeVideo): self
+    public function addUsersThatDislike(User $usersThatDislikeVideo): self
     {
         if (!$this->usersThatDislikeVideos->contains($usersThatDislikeVideo)) {
             $this->usersThatDislikeVideos->add($usersThatDislikeVideo);
@@ -173,7 +173,7 @@ class Video
         return $this;
     }
 
-    public function removeUsersThatDislikeVideo(User $usersThatDislikeVideo): self
+    public function removeUsersThatDislike(User $usersThatDislikeVideo): self
     {
         $this->usersThatDislikeVideos->removeElement($usersThatDislikeVideo);
 
