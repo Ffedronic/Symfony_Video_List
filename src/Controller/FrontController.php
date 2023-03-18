@@ -33,6 +33,7 @@ class FrontController extends AbstractController
     #[Route('/video-list/category/{categoryname},{categoryid}/{page}', name: 'video_list', defaults: ["page" => 1])]
     public function videolist(CategoryTreeFrontPage $categories, $categoryid, VideoRepository $videoRepository, $page, Request $request): Response
     {
+        dump($this->getUser());
         $categories->getCategoryListAndParent($categoryid);
 
         $ids = $categories->getChildIds($categoryid);
@@ -40,8 +41,6 @@ class FrontController extends AbstractController
 
         $videos = $videoRepository->findByChildIds($ids, $page, $request->get('sortby'));
 
-        dump($videos);
-        
         return $this->render('front/video_list.html.twig', [
             'subcategories' => $categories,
             'videos' => $videos
@@ -130,9 +129,6 @@ class FrontController extends AbstractController
         return $this->render('front/payment.html.twig');
     }
 
-    /**
-     * @Route("/new-comment/{video}", methods={"POST"}, name="new_comment")
-     */
     #[Route('/new-comment/{video}', name: 'new_comment')]
     public function newComment(Video $video, Request $request, ManagerRegistry $doctrine)
     {
@@ -150,6 +146,50 @@ class FrontController extends AbstractController
         }
 
         return $this->redirectToRoute('video_details', ['video' => $video->getId()]);
+    }
+
+    #[Route('/video-list/{video}/like', name: 'like_video', methods: ["POST"])]
+    #[Route('/video-list/{video}/dislike', name: 'dislike_video', methods: ["POST"])]
+    #[Route('/video-list/{video}/unlike', name: 'undo_like_video', methods: ["POST"])]
+    #[Route('/video-list/{video}/undodislike', name: 'undo_dislike_video', methods: ["POST"])]
+    public function toggleLikesAjax(Video $video, Request $request)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+        switch ($request->get("_route")) {
+            case 'like_video':
+                $result = $this->likeVideo($video);
+                break;
+            case 'dislike_video':
+                $result = $this->dislikeVideo($video);
+                break;
+            case 'undo_like_video':
+                $result = $this->undoLikeVideo($video);
+                break;
+            case 'undo_dislike_video':
+                $result = $this->undoDislikeVideo($video);
+                break;
+            default:
+                # code...
+                break;
+        }
+
+        return $this->json(['action' => $result, 'id' => $video->getId()]);
+    }
+
+    private function likeVideo($video){
+        return 'liked';
+    }
+
+    private function dislikeVideo($video){
+        return 'disliked';
+    }
+
+    private function undoLikeVideo($video){
+        return 'undo liked';
+    }
+
+    private function undoDislikeVideo($video){
+        return 'undo disliked';
     }
 
     public function mainCategories(CategoryRepository $categoryRepository): Response

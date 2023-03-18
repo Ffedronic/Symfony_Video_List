@@ -22,24 +22,38 @@
 						<div class="btn-group">
 
 							<i class="fa fa-thumbs-up">
-								<small class="text-muted">({{video.usersThatLike.count}})</small>
+								<small class="text-muted number-of-likes-{{video.id}}">({{video.usersThatLike.count}})</small>
 							</i>&nbsp;
 							<i class="fa fa-thumbs-down">
-								<small class="text-muted">({{video.usersThatDislike.count}})</small>
+								<small class="text-muted number-of-dislikes-{{video.id}}">({{video.usersThatDislike.count}})</small>
 							</i>
 							{% if is_granted('IS_AUTHENTICATED_REMEMBERED')  %}
-								<button data-toggle="tooltip" data-placement="top" title="Click to like the video" type="button" class="btn btn-primary btn-outline-success btn-sm ml-1">
-									<i class="fa fa-thumbs-up"></i>
+
+								{% if video in app.user.likedVideos %}
+									{% set noActionYet = null %}
+									{% set userLikesVideo = "userLikesVideo" %}
+								{% elseif video in app.user.dislikedVideos %}
+									{% set noActionYet = null %}
+									{% set userLikesVideo = null %}
+									{% set userDoesNotLikeVideo = "userDoesNotLikeVideo" %}
+								{% else %}
+									{% set userDoesNotLikeVideo = null %}
+									{% set userLikesVideo = null %}
+									{% set noActionYet = "noActionYet" %}
+								{% endif %}
+								
+								<button data-toggle="tooltip" data-placement="top" title="Click to like the video" type="button" class="btn btn-primary btn-outline-success btn-sm ml-1 video-id-{{video.id}} click-to-like-video {{noActionYet|default(null)}}">
+									<i class="fa fa-thumbs-up toogle-likes" href="{{path('like_video', {'video':video.id})}}"></i>
 								</button>
-								<!-- <button data-toggle="tooltip" data-placement="top" title="You like the video. Click to unlike" type="button" class="btn btn-primary btn-outline-success btn-sm mr-2">
-																																															                                    <i class="fa fa-thumbs-up"></i>
-																																															                                    </button> -->
-								<button data-toggle="tooltip" data-placement="top" title="Click to dislike the video" type="button" class="btn btn-primary btn-outline-danger btn-sm ml-1 mr-1">
-									<i class="fa fa-thumbs-down"></i>
+								<button data-toggle="tooltip" data-placement="top" title="You like the video. Click to unlike" type="button" class="btn btn-primary btn-outline-success btn-sm mr-2 likes-video-id-{{video.id}} click-to-unlike-video {{userLikesVideo|default(null)}}">
+									<i class="fa fa-thumbs-up toogle-likes" href=' {{path('undo_like_video', {'video':video.id})}}'></i>
 								</button>
-								<!-- <button data-toggle="tooltip" data-placement="top" title="You don't like the video. Click to undo" type="button" class="btn btn-primary btn-outline-danger btn-sm mr-2">
-																																															                                    <i class="fa fa-thumbs-down"></i>
-																																															                                    </button> -->
+								<button data-toggle="tooltip" data-placement="top" title="Click to dislike the video" type="button" class="btn btn-primary btn-outline-danger btn-sm ml-1 mr-1 video-id-{{video.id}} click-to-dislike-video {{noActionYet|default(null)}}">
+									<i class="fa fa-thumbs-down toogle-likes" href="{{path('dislike_video', {'video':video.id})}}"></i>
+								</button>
+								<button data-toggle="tooltip" data-placement="top" title="You don't like the video. Click to undo" type="button" class="btn btn-primary btn-outline-danger btn-sm mr-2 dislikes-video-id-{{video.id}} click-to-undo-dislike-video {{userDoesNotLikeVideo|default(null)}}">
+									<i href="{{path('undo_dislike_video', {'video':video.id})}}" class="fa fa-thumbs-down toogle-likes"></i>
+								</button>
 							{% endif  %}
 
 							<a class="ml-1" href="{{path('video_details', {'video':video.id})}}">Comments ({{video.comments.count}})</a>
