@@ -10,6 +10,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
 use App\Repository\VideoRepository;
 use App\Utils\CategoryTreeFrontPage;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +34,6 @@ class FrontController extends AbstractController
     #[Route('/video-list/category/{categoryname},{categoryid}/{page}', name: 'video_list', defaults: ["page" => 1])]
     public function videolist(CategoryTreeFrontPage $categories, $categoryid, VideoRepository $videoRepository, $page, Request $request): Response
     {
-        dump($this->getUser());
         $categories->getCategoryListAndParent($categoryid);
 
         $ids = $categories->getChildIds($categoryid);
@@ -152,21 +152,21 @@ class FrontController extends AbstractController
     #[Route('/video-list/{video}/dislike', name: 'dislike_video', methods: ["POST"])]
     #[Route('/video-list/{video}/unlike', name: 'undo_like_video', methods: ["POST"])]
     #[Route('/video-list/{video}/undodislike', name: 'undo_dislike_video', methods: ["POST"])]
-    public function toggleLikesAjax(Video $video, Request $request)
+    public function toggleLikesAjax(Video $video, Request $request, EntityManagerInterface $entitymanager)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
         switch ($request->get("_route")) {
             case 'like_video':
-                $result = $this->likeVideo($video);
+                $result = $this->likeVideo($video, $entitymanager);
                 break;
             case 'dislike_video':
-                $result = $this->dislikeVideo($video);
+                $result = $this->dislikeVideo($video, $entitymanager);
                 break;
             case 'undo_like_video':
-                $result = $this->undoLikeVideo($video);
+                $result = $this->undoLikeVideo($video, $entitymanager);
                 break;
             case 'undo_dislike_video':
-                $result = $this->undoDislikeVideo($video);
+                $result = $this->undoDislikeVideo($video, $entitymanager);
                 break;
             default:
                 # code...
@@ -176,19 +176,43 @@ class FrontController extends AbstractController
         return $this->json(['action' => $result, 'id' => $video->getId()]);
     }
 
-    private function likeVideo($video){
+    private function likeVideo($video, $entitymanager){
+        $user = $entitymanager->getRepository(User::class)->find($this->getUser());
+        $user -> addLikedVideo($video);
+        
+        $entitymanager->persist($user);
+        $entitymanager->flush();
+        
         return 'liked';
     }
 
-    private function dislikeVideo($video){
+    private function dislikeVideo($video, $entitymanager){
+        $user = $entitymanager->getRepository(User::class)->find($this->getUser());
+        $user -> addDislikedVideo($video);
+        
+        $entitymanager->persist($user);
+        $entitymanager->flush();
+        
         return 'disliked';
     }
 
-    private function undoLikeVideo($video){
+    private function undoLikeVideo($video, $entitymanager){
+        $user = $entitymanager->getRepository(User::class)->find($this->getUser());
+        $user -> removeLikedVideo($video);
+        
+        $entitymanager->persist($user);
+        $entitymanager->flush();
+
         return 'undo liked';
     }
 
-    private function undoDislikeVideo($video){
+    private function undoDislikeVideo($video, $entitymanager){
+        $user = $entitymanager->getRepository(User::class)->find($this->getUser());
+        $user -> removeDislikedVideo($video);
+        
+        $entitymanager->persist($user);
+        $entitymanager->flush();
+
         return 'undo disliked';
     }
 
